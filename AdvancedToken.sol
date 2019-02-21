@@ -77,7 +77,7 @@ contract tokenERC20 {
         return true;
     }
 
-    function approveAndCall(address _spender, uint256 _value, bytes meory _extraData) public returns (bool success) {
+    function approveAndCall(address _spender, uint256 _value, bytes memory _extraData) public returns (bool success) {
         tokenRecipient spender = tokenRecipient(_spender);
         if (approve(_spender, _value)) {
             spender.receiveApproval(msg.sender, _value, address(this), _extraData);
@@ -109,12 +109,12 @@ contract tokenERC20 {
     }
 }
 
-contract MyAdvancedToken is owned, TokenERC20 {
+contract MyAdvancedToken is owned, tokenERC20 {
     mapping (address => bool) public frozenAccount;
 
     event FrozenFunds(address target, bool frozen);
 
-    constructor (uint256 initialSupply, string memory tokenName, string memory tokenSymbol) TokenERC20(initialSupply, tokenName, tokenSymbol) public {}
+    constructor (uint256 initialSupply, string memory tokenName, string memory tokenSymbol) tokenERC20(initialSupply, tokenName, tokenSymbol) public {}
 
     function _transfer(address _from, address _to, uint _value) internal {
         require(_to != address(0x0));
@@ -132,7 +132,7 @@ contract MyAdvancedToken is owned, TokenERC20 {
     }
 
     function mintToken(address target, uint256 mintedAmount) onlyOwner public {
-        balanceOf[target += mintedAmount];
+        balanceOf[target] += mintedAmount;
         totalSupply += mintedAmount;
 
         emit Transfer(address(0), address(this), mintedAmount);
